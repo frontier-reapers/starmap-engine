@@ -1,0 +1,35 @@
+{
+  "$schema": "https://raw.githubusercontent.com/modelcontextprotocol/spec/main/schemas/v0.1/schema.json",
+  "name": "starmap-engine",
+  "version": "0.1.0",
+  "description": "Development environment configuration for the StarMap Engine project.",
+  "providers": [
+    {
+      "type": "filesystem",
+      "root": "."
+    },
+    {
+      "type": "command",
+      "commands": [
+        {
+          "name": "cargo test",
+          "command": "cargo",
+          "args": ["test"],
+          "description": "Run the Rust test suite"
+        },
+        {
+          "name": "cargo fmt",
+          "command": "cargo",
+          "args": ["fmt"],
+          "description": "Format the Rust workspace"
+        },
+        {
+          "name": "cargo clippy",
+          "command": "cargo",
+          "args": ["clippy", "--", "-D", "warnings"],
+          "description": "Run Clippy with warnings elevated to errors"
+        }
+      ]
+    }
+  ]
+}
