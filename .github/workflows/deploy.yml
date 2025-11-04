@@ -1,0 +1,35 @@
+name: Deploy Lambda
+
+on:
+  push:
+    tags:
+      - "v*.*.*"
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Install cargo-lambda
+        run: cargo install cargo-lambda --locked
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Build Lambda artifact
+        run: cargo lambda build --release --bin starmap_lambda --output-format zip
+
+      - name: Deploy to AWS Lambda
+        run: |
+          aws lambda update-function-code             --function-name ${{ secrets.AWS_LAMBDA_FUNCTION_NAME }}             --zip-file fileb://target/lambda/starmap_lambda/bootstrap.zip             --publish
