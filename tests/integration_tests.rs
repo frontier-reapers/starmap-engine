@@ -1,3 +1,4 @@
+use starmap_engine::data::{deserialize_graph, serialize_graph};
 use starmap_engine::graph::graph::StarGraph;
 use starmap_engine::graph::pathfinder::shortest_gate_path;
 use starmap_engine::spatial::kd_tree::KDTree;
@@ -7,9 +8,21 @@ use starmap_engine::System;
 #[test]
 fn integration_end_to_end_small_graph() {
     let systems = vec![
-        System { id: 1, name: "A".into(), pos: [0.0, 0.0, 0.0] },
-        System { id: 2, name: "B".into(), pos: [1.0, 0.0, 0.0] },
-        System { id: 3, name: "C".into(), pos: [2.0, 0.0, 0.0] },
+        System {
+            id: 1,
+            name: "A".into(),
+            pos: [0.0, 0.0, 0.0],
+        },
+        System {
+            id: 2,
+            name: "B".into(),
+            pos: [1.0, 0.0, 0.0],
+        },
+        System {
+            id: 3,
+            name: "C".into(),
+            pos: [2.0, 0.0, 0.0],
+        },
     ];
     let adjacency = vec![vec![1], vec![0, 2], vec![1]];
     let graph = StarGraph::new(systems.clone(), adjacency);
@@ -28,4 +41,31 @@ fn integration_end_to_end_small_graph() {
     let (sweep, total) = greedy_sweep_within_radius(&graph, [0.0, 0.0, 0.0], 5.0);
     assert_eq!(sweep.len(), 3);
     assert!(total > 0.0);
+}
+
+#[test]
+fn dataset_round_trip_serialization() {
+    let systems = vec![
+        System {
+            id: 1,
+            name: "Alpha".into(),
+            pos: [0.0, 0.0, 0.0],
+        },
+        System {
+            id: 2,
+            name: "Beta".into(),
+            pos: [5.0, 0.0, 0.0],
+        },
+    ];
+    let adjacency = vec![vec![1], vec![0]];
+    let graph = StarGraph::new(systems, adjacency);
+
+    let bytes = serialize_graph(&graph).expect("serialize");
+    let restored = deserialize_graph(&bytes).expect("deserialize");
+
+    assert_eq!(restored.len(), graph.len());
+    assert_eq!(restored.systems[0].name, "Alpha");
+    assert_eq!(restored.adjacency[0], vec![1]);
+    assert_eq!(restored.index_of_name("Alpha"), Some(0));
+    assert_eq!(restored.index_of_name("Beta"), Some(1));
 }
