@@ -1,5 +1,6 @@
-pub mod spatial;
+pub mod data;
 pub mod graph;
+pub mod spatial;
 pub mod sweep;
 
 use serde::{Deserialize, Serialize};

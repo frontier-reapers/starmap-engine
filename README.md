@@ -33,7 +33,7 @@ cargo test
 ```json
 {
   "kind": "nearest",
-  "origin": [0.0, 0.0, 0.0],
+  "system_name": "A",
   "radius": 3.0,
   "count": 3
 }
@@ -55,11 +55,31 @@ cargo test
 }
 ```
 
+Both the `nearest` and `sweep` requests accept either explicit coordinates via
+`origin`/`center` fields **or** a `system_name` that is resolved against the
+loaded starmap dataset.
+
+## Dataset pipeline
+
+Run the dataset builder to download the latest
+[`evefrontier_datasets`](https://github.com/Scetrov/evefrontier_datasets)
+release and emit a compressed bundle suitable for Lambda deployment:
+
+```bash
+cargo run --bin build_dataset
+```
+
+The command stores the resulting files in `data/`:
+
+- `starmap.bin` – Zstandard-compressed `StarGraph` ready for inclusion in the Lambda package.
+- `starmap.meta.json` – Build metadata (release tag, counts, timestamp).
+
 ## AWS Lambda
 
 The binary `starmap_lambda` is suitable for deployment to AWS Lambda using the
 `provided.al2` runtime and tools such as [`cargo-lambda`](https://www.cargo-lambda.info/).
 
-You will likely want to replace the tiny in-memory sample graph in `src/main.rs`
-with your pre-baked index (e.g. from `c3e6.db`) and load it via `include_bytes!`
-for best cold-start performance.
+Set the `STARMAP_DATASET` environment variable to the path of the compressed
+dataset (for example, `data/starmap.bin`) to have the Lambda load it at startup.
+If the variable is unset or loading fails, the handler falls back to a small
+in-memory demo graph.
