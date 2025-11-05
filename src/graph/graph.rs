@@ -1,7 +1,9 @@
+use serde::{Deserialize, Serialize};
+
 use crate::System;
 
 /// Simple adjacency-list graph over systems.
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct StarGraph {
     pub systems: Vec<System>,
     /// adjacency[i] lists neighbour indices of systems[i]
@@ -10,7 +12,11 @@ pub struct StarGraph {
 
 impl StarGraph {
     pub fn new(systems: Vec<System>, adjacency: Vec<Vec<usize>>) -> Self {
-        assert_eq!(systems.len(), adjacency.len(), "adjacency must match systems");
+        assert_eq!(
+            systems.len(),
+            adjacency.len(),
+            "adjacency must match systems"
+        );
         StarGraph { systems, adjacency }
     }
 
@@ -24,5 +30,9 @@ impl StarGraph {
 
     pub fn index_of_id(&self, id: u32) -> Option<usize> {
         self.systems.iter().position(|s| s.id == id)
+    }
+
+    pub fn index_of_name(&self, name: &str) -> Option<usize> {
+        self.systems.iter().position(|s| s.name == name)
     }
 }
