@@ -67,10 +67,26 @@ mod tests {
     #[test]
     fn sweep_visits_all_within_radius() {
         let systems = vec![
-            System { id: 1, name: "A".into(), pos: [0.0, 0.0, 0.0] },
-            System { id: 2, name: "B".into(), pos: [1.0, 0.0, 0.0] },
-            System { id: 3, name: "C".into(), pos: [2.0, 0.0, 0.0] },
-            System { id: 4, name: "D".into(), pos: [10.0, 0.0, 0.0] },
+            System {
+                id: 1,
+                name: "A".into(),
+                pos: [0.0, 0.0, 0.0],
+            },
+            System {
+                id: 2,
+                name: "B".into(),
+                pos: [1.0, 0.0, 0.0],
+            },
+            System {
+                id: 3,
+                name: "C".into(),
+                pos: [2.0, 0.0, 0.0],
+            },
+            System {
+                id: 4,
+                name: "D".into(),
+                pos: [10.0, 0.0, 0.0],
+            },
         ];
         let adjacency = vec![vec![], vec![], vec![], vec![]];
         let graph = StarGraph::new(systems, adjacency);
