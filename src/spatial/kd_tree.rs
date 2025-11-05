@@ -23,7 +23,11 @@ impl KDTree {
         KDTree { root }
     }
 
-    fn build_recursive(points: &[[f32; 3]], idx: &mut [usize], depth: usize) -> Option<Box<KDNode>> {
+    fn build_recursive(
+        points: &[[f32; 3]],
+        idx: &mut [usize],
+        depth: usize,
+    ) -> Option<Box<KDNode>> {
         use core::cmp::Ordering;
 
         if idx.is_empty() {
@@ -64,6 +68,7 @@ impl KDTree {
         results
     }
 
+    #[allow(clippy::only_used_in_recursion)]
     fn search_recursive(
         &self,
         node: &Option<Box<KDNode>>,
